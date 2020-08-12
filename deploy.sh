@@ -1,17 +1,17 @@
 #!/bin/sh
 
-ENV="dev"
+ENV="develop"
 
 
-if [ "$1" = "prod" ]; then
-    ENV="prod"
+if [ "$1" = "master" ]; then
+    ENV="master"
 fi
 
 terraform fmt
 
 terraform init
 
-terraform plan -var-file="${GITHUB_REF}/variables.tfvars" -out="plan.tfout"
+terraform plan -var-file="${ENV}/variables.tfvars" -out="plan.tfout"
 
 terraform apply plan.tfout
 
