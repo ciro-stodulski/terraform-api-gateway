@@ -7,8 +7,6 @@ if [ "$1" = "prod" ]; then
     ENV="prod"
 fi
 
-cd api
-
 terraform fmt
 
 terraform init
