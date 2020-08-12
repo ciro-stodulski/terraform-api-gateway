@@ -18,6 +18,7 @@ jobs:
         shell: bash
 
     steps:
+    - name: AWS cli
     - uses: chrislennon/action-aws-cli@v1.1
     # All commands after this point have access to the AWS CLI
     - run: aws s3 ls
@@ -49,10 +50,6 @@ jobs:
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
       run: terraform fmt -check
-
-    # Generates an execution plan for Terraform
-    - name: Terraform Get Credentions
-      run: terraform plan -var-file="${{ steps.vars.outputs.branch }}/variables.tfvars" -out="plan.tfout"
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
