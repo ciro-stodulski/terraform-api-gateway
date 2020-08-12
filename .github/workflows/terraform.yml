@@ -8,19 +8,6 @@ on:
   pull_request:
 
 jobs:
-  listS3:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macOS-10.14, windows-2016, ubuntu-18.04]
-    steps:
-      - uses: chrislennon/action-aws-cli@v1.1
-      # All commands after this point have access to the AWS CLI
-      - run: aws s3 ls
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
@@ -30,8 +17,15 @@ jobs:
       run:
         shell: bash
 
-    # Checkout the repository to the GitHub Actions runner
     steps:
+      - uses: chrislennon/action-aws-cli@v1.1
+      # All commands after this point have access to the AWS CLI
+      - run: aws s3 ls
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v2
 
