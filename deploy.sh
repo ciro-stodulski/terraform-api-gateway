@@ -11,7 +11,7 @@ terraform fmt
 
 terraform init
 
-terraform plan -var-file="${ENV}/variables.tfvars" -out="plan.tfout"
+terraform plan -var-file="${GITHUB_REF}/variables.tfvars" -out="plan.tfout"
 
 terraform apply plan.tfout
 
