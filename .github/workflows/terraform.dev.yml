@@ -65,7 +65,7 @@ jobs:
 on:
   pull_request:
     branches:
-    - develop
+    - *
 
 jobs:
   terraform:
