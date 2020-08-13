@@ -1,7 +1,7 @@
-# terraform-api-gateway
+# terraform-api-gateway mock
 
-mock to automate the deployment of the api gateway with:
+Mock to automate the deployment of the api gateway with:
 
 - terraform
 - aws
-- aws cli
+- git actions
