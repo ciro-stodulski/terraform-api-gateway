@@ -4,13 +4,16 @@ resource "aws_api_gateway_rest_api" "terraform" {
 }
 
 module consulta {
-  source = "./resources/consulta"
-  aws_api_gateway_rest_api = "${var.aws_api_gateway_rest_api}"
+  source                             = "./resources/consulta"
+  aws_api_terraform_id               = "${aws_api_gateway_rest_api.terraform.id}"
+  aws_api_terraform_root_resource_id = "${aws_api_gateway_rest_api.terraform.root_resource_id}"
+  env = "${var.env}"
 }
 
-resource "aws_api_gateway_deployment" "terraform_deployment" {
-  depends_on = ["aws_api_gateway_integration.this"]
 
-  rest_api_id = "${aws_api_gateway_rest_api.terraform.id}"
-  stage_name  = "${var.env}"
+module mockjson {
+  source                             = "./resources/mockjson"
+  aws_api_terraform_id               = "${aws_api_gateway_rest_api.terraform.id}"
+  aws_api_terraform_root_resource_id = "${aws_api_gateway_rest_api.terraform.root_resource_id}"
+  env = "${var.env}"
 }
