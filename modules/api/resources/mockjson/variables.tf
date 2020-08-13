@@ -1,5 +1,4 @@
-variable env {
-}
+variable env {}
 
 variable aws_api_terraform_id {
   type = "string"
