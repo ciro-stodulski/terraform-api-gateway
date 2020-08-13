@@ -63,7 +63,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
 
 on:
-  pull-request:
+  pull_request:
     branches:
     - develop
 
