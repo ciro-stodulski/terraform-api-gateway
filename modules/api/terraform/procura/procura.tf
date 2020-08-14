@@ -4,25 +4,24 @@ resource "aws_api_gateway_resource" "procura" {
   path_part   = "procura"
 }
 
-resource "aws_api_gateway_method" "get" {
+resource "aws_api_gateway_method" "post" {
   rest_api_id   = "${var.aws_api_terraform_id}"
   resource_id   = "${aws_api_gateway_resource.procura.id}"
-  http_method   = "GET"
+  http_method   = "POST"
   authorization = "NONE"
 }
 
 resource "aws_api_gateway_integration" "procura" {
   rest_api_id             = "${var.aws_api_terraform_id}"
   resource_id             = "${aws_api_gateway_resource.procura.id}"
-  http_method             = "${aws_api_gateway_method.get.http_method}"
+  http_method             = "${aws_api_gateway_method.post.http_method}"
   type                    = "HTTP"
   integration_http_method = "GET"
-  uri                     = "https://www.googAAAAADle.de"
+  uri                     = "https://jsonplaceholder.typicode.com/users"
 }
 
 resource "aws_api_gateway_deployment" "procura" {
   depends_on = ["aws_api_gateway_integration.procura"]
 
   rest_api_id = "${var.aws_api_terraform_id}"
-  stage_name  = "${var.env}"
 }

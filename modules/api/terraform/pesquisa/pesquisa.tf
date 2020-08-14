@@ -17,12 +17,11 @@ resource "aws_api_gateway_integration" "pesquisa" {
   http_method             = "${aws_api_gateway_method.post.http_method}"
   type                    = "HTTP"
   integration_http_method = "GET"
-  uri                     = "https://www.googAAAAADle.de"
+  uri                     = "https://jsonplaceholder.typicode.com/todos"
 }
 
 resource "aws_api_gateway_deployment" "pesquisa" {
   depends_on = ["aws_api_gateway_integration.pesquisa"]
 
   rest_api_id = "${var.aws_api_terraform_id}"
-  stage_name  = "${var.env}"
 }

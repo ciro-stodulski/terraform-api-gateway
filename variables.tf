@@ -1,3 +1,1 @@
 variable region {}
-
-variable env {}

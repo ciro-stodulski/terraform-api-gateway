@@ -17,12 +17,11 @@ resource "aws_api_gateway_integration" "consulta" {
   http_method             = "${aws_api_gateway_method.get.http_method}"
   type                    = "HTTP"
   integration_http_method = "GET"
-  uri                     = "https://www.googAAAAADle.de"
+  uri                     = "https://jsonplaceholder.typicode.com/users/1"
 }
 
 resource "aws_api_gateway_deployment" "consulta" {
   depends_on = ["aws_api_gateway_integration.consulta"]
 
   rest_api_id = "${var.aws_api_terraform_id}"
-  stage_name  = "${var.env}"
 }

@@ -5,5 +5,3 @@ variable aws_api_terraform_id {
 variable aws_api_terraform_root_resource_id {
   type = "string"
 }
-
-variable env {}
