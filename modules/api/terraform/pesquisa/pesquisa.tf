@@ -17,7 +17,7 @@ resource "aws_api_gateway_integration" "pesquisa" {
   http_method             = "${aws_api_gateway_method.post.http_method}"
   type                    = "HTTP"
   integration_http_method = "GET"
-  uri                     = "https://jsonplaceholder.typicode.com/todos"
+  uri                     = "https://jsonplaceholder.typicode.com/todos/1"
 }
 
 resource "aws_api_gateway_deployment" "pesquisa" {
