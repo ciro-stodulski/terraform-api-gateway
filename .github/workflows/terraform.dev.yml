@@ -71,6 +71,13 @@ jobs:
       - name: "Setup - Checkout"
         uses: actions/checkout@v2.1.0
 
+      - name: Declare some variables
+        id: vars
+        shell: bash
+        run: |
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
       # Static analysis of Terraform templates to spot potential security issues
       # Marketplace: https://github.com/marketplace/actions/terraform-security-scan
       - name: "Setup - Security Scan"
