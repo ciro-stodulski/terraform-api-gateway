@@ -4,20 +4,20 @@ resource "aws_api_gateway_resource" "pesquisa" {
   path_part   = "pesquisa"
 }
 
-resource "aws_api_gateway_method" "post" {
+resource "aws_api_gateway_method" "get" {
   rest_api_id   = "${var.aws_api_terraform_id}"
   resource_id   = "${aws_api_gateway_resource.pesquisa.id}"
-  http_method   = "POST"
+  http_method   = "GET"
   authorization = "NONE"
 }
 
 resource "aws_api_gateway_integration" "pesquisa" {
   rest_api_id             = "${var.aws_api_terraform_id}"
   resource_id             = "${aws_api_gateway_resource.pesquisa.id}"
-  http_method             = "${aws_api_gateway_method.post.http_method}"
+  http_method             = "${aws_api_gateway_method.get.http_method}"
   type                    = "HTTP"
   integration_http_method = "GET"
-  uri                     = "https://jsonplaceholder.typicode.com/todos/1"
+  uri                     = "https://jsonplaceholder.typicode.com/todos/2"
 }
 
 resource "aws_api_gateway_deployment" "pesquisa" {
