@@ -46,7 +46,7 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform plan -var-file="${{ steps.vars.outputs.branch }}/variables.tfvars" -out="plan.tfout" -input=false -no-color
+      run: terraform plan -var-file="${{ steps.vars.outputs.branch }}/variables.tfvars" -out="plan.tfout" -input=false 
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}
