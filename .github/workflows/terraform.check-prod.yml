@@ -1,4 +1,4 @@
-name: 'Terraform check'
+name: 'Terraform check format'
 
 on:
   pull_request:
