@@ -5,126 +5,60 @@ on:
     branches:
     - develop
 
-# jobs:
-#   terraform:
-#     name: 'Terraform'
-#     runs-on: ubuntu-latest
-
-#     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-#     defaults:
-#       run:
-#         shell: bash
-
-#     steps:
-#     # Checkout the repository to the GitHub Actions runner
-#     - name: Checkout
-#       uses: actions/checkout@v2
-
-#     - name: Declare some variables
-#       id: vars
-#       shell: bash
-#       run: |
-#         echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-#         echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-
-#     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
-#     - name: Setup Terraform
-#       uses: hashicorp/setup-terraform@v1.1.0
-#       with:
-#         terraform_version: 0.11.14
-
-#     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-#     - name: Terraform Init
-#       env:
-#         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
-#         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV  }}
-#       run: terraform init
-
-#     # Checks that all Terraform configuration files adhere to a canonical format
-#     - name: Terraform Format
-#       run: terraform fmt -check
-
-#     # Generates an execution plan for Terraform
-#     - name: Terraform Plan
-#       run: terraform plan -var-file="${{ steps.vars.outputs.branch }}/variables.tfvars" -out="plan.tfout" -input=false
-#       env:
-#         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
-#         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
-
-#     # On push to master, build or change infrastructure according to Terraform configuration files
-#     # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-#     - name: Terraform Apply
-#       run: |
-#         terraform apply plan.tfout 
-#         rm -rf plan.tfout
-#       env:
-#         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
-#         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
-
 jobs:
-  terraform-plan:
-    name: "Terraform Plan"
+  terraform:
+    name: 'Terraform'
     runs-on: ubuntu-latest
-    steps:
-      # Checkout the code
-      # Marketplace: https://github.com/marketplace/actions/checkout
-      - name: "Setup - Checkout"
-        uses: actions/checkout@v2.1.0
 
-      - name: Declare some variables
-        id: vars
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
         shell: bash
-        run: |
-          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
 
-      # Static analysis of Terraform templates to spot potential security issues
-      # Marketplace: https://github.com/marketplace/actions/terraform-security-scan
-      - name: "Setup - Security Scan"
-        uses: triat/terraform-security-scan@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v2
 
-      # Provides AWS credentials to Terraform
-      # By default, Terraform checks the home directory for a .aws folder with a credential file
-      # Documentation: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/create-shared-credentials-file.html
-      - name: "Setup - Build AWS Credentials"
-        run: |
-          mkdir -p ~/.aws
-          echo "[default]" > ~/.aws/credentials
-          echo "aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}" >> ~/.aws/credentials
-          echo "aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}" >> ~/.aws/credentials
-      # Downloads a specific version of Terraform CLI and adds it to PATH
-      # Marketplace: https://github.com/marketplace/actions/hashicorp-setup-terraform
-      - name: "Setup - Terraform CLI"
-        uses: hashicorp/setup-terraform@v1.0.1
-        with:
-          terraform_version: 0.11.14
+    - name: Declare some variables
+      id: vars
+      shell: bash
+      run: |
+        echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
 
-      # Init pulls credentials from the .aws/credentials file by default
-      - name: "Run - Terraform Init"
-        run: terraform init -input=false
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1.1.0
+      with:
+        terraform_version: 0.11.14
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-      # The id value is used for reference in the comment step via "steps.plan.outputs.stdout"
-      # Note: Color is disabled to prevent messy characters from appearing in the pull request comment
-      - name: "Run - Terraform Plan"
-        id: plan
-        run: terraform plan -var-file="${{ steps.vars.outputs.branch }}/variables.tfvars" -input=false -no-color
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV  }}
+      run: terraform init
 
-      # Submit a comment with the plan output to the pull request
-      - name: "Run - Terraform Comment"
-        uses: actions/github-script@0.9.0
-        env:
-          STDOUT: "```${{ steps.plan.outputs.stdout }}```"
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: process.env.STDOUT
-            })
-       # Auto-approve prevents the requirement of human interaction
-      - name: "Run - Terraform Apply"
-        run: terraform apply -var-file="${{ steps.vars.outputs.branch }}/variables.tfvars" -input=false -auto-approve
+    # Checks that all Terraform configuration files adhere to a canonical format
+    - name: Terraform Format
+      run: terraform fmt -check
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      run: terraform plan -var-file="${{ steps.vars.outputs.branch }}/variables.tfvars" -out="plan.tfout"
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+
+    # On push to master, build or change infrastructure according to Terraform configuration files
+    # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply
+      run: |
+        terraform apply plan.tfout 
+        rm -rf plan.tfout
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+
