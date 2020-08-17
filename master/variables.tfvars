@@ -1,2 +1,3 @@
   region     = "us-east-1"
-  env = "prod"
+  api_name="terraform_production"
+  api_description="production"

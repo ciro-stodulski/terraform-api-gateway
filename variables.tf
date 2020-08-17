@@ -1,11 +1,11 @@
-variable region {}
-
-variable env {}
+variable region {
+  type = "string"
+}
 
 variable api_name {
-  default = "terraform"
+  type = "string"
 }
 
 variable api_description {
-  default = "api built with terraform"
+  type = "string"
 }

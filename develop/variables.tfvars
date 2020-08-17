@@ -1,2 +1,3 @@
   region  = "us-east-1"
-  env = "dev"
+  api_name="terraform_homolog"
+  api_description="homolog"
