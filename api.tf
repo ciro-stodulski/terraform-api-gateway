@@ -1,6 +1,6 @@
 resource "aws_api_gateway_rest_api" "terraform" {
-  name        = "terraform"
-  description = "api built with terraform"
+  name        = "${var.api_name}"
+  description = "${var.api_description}"
 }
 
 module "api_terraform" {
