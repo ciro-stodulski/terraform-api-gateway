@@ -47,7 +47,7 @@ jobs:
 
     # Checks that all Terraform workspace
     - name: Terraform Workspace
-      run: terraform workspace list
+      run: terraform workspace select dev
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
