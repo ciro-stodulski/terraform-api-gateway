@@ -38,7 +38,7 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_PROD  }}
-      run: terraform init -backend-config=./variables/${{ steps.vars.outputs.branch }}/variable_config.tfvars
+      run: terraform init -backend-config=./variables/master/variable_config.tfvars
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format

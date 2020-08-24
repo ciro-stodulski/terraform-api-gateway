@@ -20,6 +20,13 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Declare some variables
+      id: vars
+      shell: bash
+      run: |
+        echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1.1.0
@@ -31,7 +38,7 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV  }}
-      run: terraform init -backend-config=./variables/develop/variable_config.tfvars
+      run: terraform init -backend-config=./variables/${{ steps.vars.outputs.branch }}/variable_config.tfvars
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
