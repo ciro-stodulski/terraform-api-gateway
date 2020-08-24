@@ -38,21 +38,15 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV  }}
-      run: terraform init
+      run: terraform init -backend-config=./variables/${{ steps.vars.outputs.branch }}/variable_config.tfvars
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
       run: terraform fmt -check
 
-    # Checks that all Terraform workspace
-    - name: Terraform Workspace
-      run: |
-       terraform workspace select dev
-       terraform workspace list
-
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform plan -var-file="${{ steps.vars.outputs.branch }}/variables.tfvars" -out="plan.tfout"
+      run: terraform plan -var-file="./variables/${{ steps.vars.outputs.branch }}/variables.tfvars" -out="plan.tfout"
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
